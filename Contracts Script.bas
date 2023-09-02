@@ -41,6 +41,7 @@ Sub CreateTables()
     
     Dim ws As Worksheet
     Dim Cell As Range
+    Dim errcnt As Long
     
     'Disable ScreenUpdating to improve performance
     Application.ScreenUpdating = False
@@ -140,6 +141,21 @@ Sub CreateTables()
     Open Application.ActiveWorkbook.Path & "\Log.txt" For Append As #1
     Print #1, Now & " " & "Macro Done"
     Close #1
+
+    'Display message that the operation has been completed
+    If errcnt = 1 then
+        
+        MsgBox "Operation Completed with " & errcnt & " Error
+    
+    Else If errcnt > 1 then
+        
+        MsgBox "Operation Completed with " & errcnt & " Errors
+        
+    Else
+        
+        MsgBox "Operation Completed Successfully"
+    
+    End If
     
     Exit Sub
 
@@ -149,6 +165,6 @@ ErrHandler:
         Open Application.ActiveWorkbook.Path & "\Log.txt" For Append As #1
         Print #1, Now & " " & "Error in sheet " & ws.Name & " cell " & Cell.Address & " Error Code : " & Err.Number & ":" & Err.Description
         Close #1
-        
+        errcnt = errcnt +1
         Resume Next
 End Sub
