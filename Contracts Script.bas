@@ -123,12 +123,32 @@ Sub CreateTables()
             ws.Range("AK8").Value = "2024"
         End If
         
-        lRow = ws.Cells(ws.Rows.Count, "B").End(xlUp).Row
+        'Clean table headers
+        For Each Cell In ws.Range("A8:O8")
+            Cell.Value = Cell.Offset(-1, 0).Value
+            Cell.Offset(-1, 0).Value = ""
+        Next Cell
+       
+        For Each Cell In ws.Range("R8:X8")
+            Cell.Value = Cell.Value & " on platform"
+        Next Cell
+       
+        For Each Cell In ws.Range("Y8:AJ8")
+            Cell.Value = "23 disbursement plan " & Cell.Value
+        Next Cell
+
+        'Determine the last row or set it to row 9 if no records are found
+        If ws.Cells(ws.Rows.Count, "B").End(xlUp).Row < 9 Then
+            lRow = 9
+        Else
+            lRow = ws.Cells(ws.Rows.Count, "B").End(xlUp).Row
+        End If
+        
         'ws.Range("A7:O100").Select
         'Selecting to the latest data record instead of selecting a large table
-        ws.Range("A7:AK" & lRow).Select
+        ws.Range("A8:AK" & lRow).Select
         Application.CutCopyMode = False
-        ws.ListObjects.Add(xlSrcRange, Range("$A$7:$AK$" & lRow), , xlYes).Name = _
+        ws.ListObjects.Add(xlSrcRange, Range("$A$8:$AK$" & lRow), , xlYes).Name = _
             "Program_" & ws.Range("C4").Value & "_Contracts"
         
         'Return to cell A1 for visual uniformity
@@ -154,13 +174,13 @@ Sub CreateTables()
     Close #1
 
     'Display message that the operation has been completed
-    If errcnt = 1 then
+    If errcnt = 1 Then
         
-        MsgBox "Operation Completed with " & errcnt & " Error
-    
-    Else If errcnt > 1 then
+        MsgBox "Operation Completed with " & errcnt & " Error"
         
-        MsgBox "Operation Completed with " & errcnt & " Errors
+    ElseIf errcnt > 1 Then
+        
+        MsgBox "Operation Completed with " & errcnt & " Errors"
         
     Else
         
