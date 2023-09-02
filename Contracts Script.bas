@@ -1,4 +1,3 @@
-Attribute VB_Name = "ContractsDataCleaningPreporation"
 Sub ZoomUnhideUnmerge()
     
     Dim ws As Worksheet
@@ -42,6 +41,7 @@ Sub CreateTables()
     Dim ws As Worksheet
     Dim Cell As Range
     Dim errcnt As Long
+    Dim lRow As Long
     
     'Disable ScreenUpdating to improve performance
     Application.ScreenUpdating = False
@@ -113,11 +113,22 @@ Sub CreateTables()
             "Program_" & ws.Range("C4").Value & "_MainData"
         
         'Convert project list range to table
+        
+        'Clean columns first
+        If ws.Range("AL8").Value = "2024" Then
+            ws.Columns(37).Delete
+        End If
+        
+        If ws.Range("AK8").Value <> "2024" Then
+            ws.Range("AK8").Value = "2024"
+        End If
+        
+        lRow = ws.Cells(ws.Rows.Count, "B").End(xlUp).Row
         'ws.Range("A7:O100").Select
         'Selecting to the latest data record instead of selecting a large table
-        ws.Range("A7:O" & ws.Cells(ws.Rows.Count, "B").End(xlUp).Row).Select
+        ws.Range("A7:AK" & lRow).Select
         Application.CutCopyMode = False
-        ws.ListObjects.Add(xlSrcRange, Range("$A$7:$O$306"), , xlYes).Name = _
+        ws.ListObjects.Add(xlSrcRange, Range("$A$7:$AK$" & lRow), , xlYes).Name = _
             "Program_" & ws.Range("C4").Value & "_Contracts"
         
         'Return to cell A1 for visual uniformity
@@ -142,15 +153,11 @@ Sub CreateTables()
     Print #1, Now & " " & "Macro Done"
     Close #1
 
-    'Display message that the operation has been completed
-    If errcnt = 1 then
+    'Display message that the operation successfully completed
+    If errcnt >= 1 Then
         
-        MsgBox "Operation Completed with " & errcnt & " Error
+        MsgBox "Operation Completed with " & errcnt & " Errors"
     
-    Else If errcnt > 1 then
-        
-        MsgBox "Operation Completed with " & errcnt & " Errors
-        
     Else
         
         MsgBox "Operation Completed Successfully"
@@ -165,6 +172,6 @@ ErrHandler:
         Open Application.ActiveWorkbook.Path & "\Log.txt" For Append As #1
         Print #1, Now & " " & "Error in sheet " & ws.Name & " cell " & Cell.Address & " Error Code : " & Err.Number & ":" & Err.Description
         Close #1
-        errcnt = errcnt +1
+        errcnt = errcnt + 1
         Resume Next
 End Sub
