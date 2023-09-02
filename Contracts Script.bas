@@ -153,11 +153,15 @@ Sub CreateTables()
     Print #1, Now & " " & "Macro Done"
     Close #1
 
-    'Display message that the operation successfully completed
-    If errcnt >= 1 Then
+    'Display message that the operation has been completed
+    If errcnt = 1 then
         
-        MsgBox "Operation Completed with " & errcnt & " Errors"
+        MsgBox "Operation Completed with " & errcnt & " Error
     
+    Else If errcnt > 1 then
+        
+        MsgBox "Operation Completed with " & errcnt & " Errors
+        
     Else
         
         MsgBox "Operation Completed Successfully"
